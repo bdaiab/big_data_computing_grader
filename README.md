@@ -1,7 +1,7 @@
-xqueue_watcher
+modified xqueue_watcher
 ==========
 
-This is an implementation of a polling [XQueue](https://github.com/edx/xqueue) client and grader.
+This is a modified version of [xqueue_watcher](https://github.com/edx/xqueue-watcher).
 
 Overview
 ========

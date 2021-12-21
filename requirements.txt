@@ -1,0 +1,9 @@
+findspark==1.4.2
+graphframes==0.6
+numpy==1.19.5
+pip-tools==6.2.0
+py==1.10.0
+py4j==0.10.9
+pyparsing==2.4.7
+pyspark==3.0.3
+requests==2.26.0

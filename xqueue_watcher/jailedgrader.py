@@ -159,7 +159,7 @@ class JailedGrader(Grader):
             'correct': False,
             'score': 0,
         }
-        self.log.info(f"Start grading submission from {student_info['anonymous_student_id']}.")
+        self.log.info(f"Start grading submission from {student_info['anonymous_student_id']}, submission time: {student_info['submission_time']}.")
 
         # There are some cases where the course team would like to accept a
         # student submission but not process the student code. Some examples are
@@ -190,7 +190,7 @@ class JailedGrader(Grader):
         grader_module = imp.load_source("grader_module", str(grader_path))
         grader = grader_module.grader
         isStream = grader.get_isStream()
-        timeout = 120 if isStream else 45
+        timeout = 75 if isStream else 30
         # self.log.debug(f'isStream: {isStream}\n')
 
         # Preprocess for grader-specified errors
@@ -358,7 +358,7 @@ def main(args):     # pragma: no cover
     from codejail.jail_code import configure
     import getpass
 
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     if len(args) != 2:
         return
 

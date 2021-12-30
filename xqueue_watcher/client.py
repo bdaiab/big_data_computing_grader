@@ -32,7 +32,7 @@ class XQueueClient:
         self.poll_interval = poll_interval
         self.login_poll_interval = login_poll_interval
         self.follow_client_redirects = follow_client_redirects
-        self.poll_interval_multiplier = [2,4,8]
+        self.poll_interval_multiplier = [1,2,4,8]
         self.poll_idx = 0
 
         if http_basic_auth is not None:
@@ -204,7 +204,7 @@ class XQueueClient:
                     time.sleep(self.poll_interval)
                 else:
                     time.sleep(self.poll_interval_multiplier[self.poll_idx] * self.poll_interval)
-                    self.poll_idx = self.poll_idx + 1 if (self.poll_idx + 1 < 3) else 2
+                    self.poll_idx = self.poll_idx + 1 if (self.poll_idx + 1 < 4) else 3
 
         return True
 

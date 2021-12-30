@@ -36,5 +36,5 @@ def printResult(rdd):
 Stat.foreachRDD(printResult)
   
 ssc.start() 
-ssc.awaitTermination(60)
+ssc.awaitTermination(50)
 ssc.stop(False)

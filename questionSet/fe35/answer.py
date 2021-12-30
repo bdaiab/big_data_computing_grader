@@ -42,5 +42,5 @@ def printResults(rdd):
 counts_sorted.foreachRDD(printResults)
   
 ssc.start() 
-ssc.awaitTermination(60)
+ssc.awaitTermination(50)
 ssc.stop(False)

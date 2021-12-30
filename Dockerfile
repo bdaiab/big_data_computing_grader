@@ -23,7 +23,11 @@ RUN wget "https://mirrors.tuna.tsinghua.edu.cn/apache/spark/spark-3.0.3/spark-3.
 ENV SPARK_HOME=/edx/app/xqueue_watcher/spark-3.0.3-bin-hadoop2.7
 EXPOSE 6066 8080 7077 4044 18080
 
-RUN useradd -m --shell /bin/false sandbox
+RUN useradd -m --shell /bin/false sandbox \
+	&& chown -R sandbox /edx/app/xqueue_watcher/checkpoint \
+	&& chmod 755 /edx/app/xqueue_watcher/checkpoint \
+	&& chown -R sandbox /edx/app/xqueue_watcher/log \
+	&& chmod 755 /edx/app/xqueue_watcher/log
 USER sandbox
 
 CMD /edx/app/xqueue_watcher/spark-3.0.3-bin-hadoop2.7/sbin/start-master.sh && \

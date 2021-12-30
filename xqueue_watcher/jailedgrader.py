@@ -190,7 +190,7 @@ class JailedGrader(Grader):
         grader_module = imp.load_source("grader_module", str(grader_path))
         grader = grader_module.grader
         isStream = grader.get_isStream()
-        timeout = 120 if isStream else 60
+        timeout = 120 if isStream else 45
         # self.log.debug(f'isStream: {isStream}\n')
 
         # Preprocess for grader-specified errors

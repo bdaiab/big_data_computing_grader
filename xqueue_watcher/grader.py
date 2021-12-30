@@ -122,7 +122,7 @@ class Grader:
             student_response = body['student_response']
             payload = body['grader_payload']
             student_info = json.loads(body["student_info"])
-            self.log.info(f"Get a submission from {student_info['anonymous_student_id']}.")
+            self.log.info(f"Get a submission from {student_info['anonymous_student_id']}, submission time: {student_info['submission_time']}.")
             try:
                 grader_config = json.loads(payload)
             except ValueError as err:

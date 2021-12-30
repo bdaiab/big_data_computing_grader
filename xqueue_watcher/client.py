@@ -6,7 +6,7 @@ from requests.auth import HTTPBasicAuth
 import threading
 import multiprocessing
 from .settings import MANAGER_CONFIG_DEFAULTS
-
+import traceback
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
@@ -78,6 +78,7 @@ class XQueueClient:
         r = None
         while not r:
             try:
+                # log.info(f'start request')
                 r = self.session.request(
                     method,
                     url,
@@ -86,9 +87,12 @@ class XQueueClient:
                     allow_redirects=self.follow_client_redirects,
                     **kwargs
                 )
+                # log.info(f'after request{r}')
             except requests.exceptions.ConnectionError as e:
                 log.error('Could not connect to server at %s in timeout=%r', url, self.requests_timeout)
                 return (False, e)
+            except Exception as e:
+                log.error(traceback.format_exc())
             if r.status_code == 200:
                 return self._parse_response(r)
             # Django can issue both a 302 to the login page and a
@@ -148,8 +152,13 @@ class XQueueClient:
             if result:
                 reply = {'xqueue_body': json.dumps(result),
                          'xqueue_header': content['xqueue_header']}
+                # for test purpose
+                # test = '{"correct": true,"score": 1,"msg": "<p>The code passed all test</p>"}'
+                # reply = {'xqueue_header': content['xqueue_header'],
+                #          'xqueue_body': json.dumps(json.loads(test))}
+                # log.info(f'start post request, reply: {reply}')
                 status, message = self._request('post', '/xqueue/put_result/', data=reply, verify=False)
-                # log.warning(f'status: {status}, message: {message}')
+                # log.info(f'status: {status}, message: {message}')
                 if not status:
                     log.error('Failure for %r -> %r', reply, message)
                 success.append(status)

@@ -26,8 +26,8 @@ EXPOSE 6066 8080 7077 4044 18080
 RUN useradd -m --shell /bin/false sandbox \
 	&& chown -R sandbox /edx/app/xqueue_watcher/checkpoint \
 	&& chmod 755 /edx/app/xqueue_watcher/checkpoint \
-	&& chown -R sandbox /edx/app/xqueue_watcher/log \
-	&& chmod 755 /edx/app/xqueue_watcher/log
+	&& chown -R sandbox /edx/app/xqueue_watcher/grader_log \
+	&& chmod 755 /edx/app/xqueue_watcher/grader_log
 USER sandbox
 
 CMD /edx/app/xqueue_watcher/spark-3.0.3-bin-hadoop2.7/sbin/start-master.sh && \

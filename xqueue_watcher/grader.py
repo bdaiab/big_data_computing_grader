@@ -89,7 +89,7 @@ class Grader:
         """
         self.log = logging.getLogger(logger_name)
         self.log.setLevel(logging.INFO)
-        handler = logging.FileHandler("./log/log.txt")
+        handler = logging.FileHandler("./grader_log/log.txt")
         handler.setLevel(logging.INFO)
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)

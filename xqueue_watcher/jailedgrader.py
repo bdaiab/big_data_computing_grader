@@ -19,7 +19,7 @@ from codejail.subproc import run_subprocess
 from grader_support.gradelib import EndTest
 from grader_support.graderutil import LANGUAGE
 import grader_support
-
+import traceback
 from .grader import Grader
 
 TIMEOUT = 1
@@ -128,9 +128,10 @@ class JailedGrader(Grader):
             # self.log.debug(f'output: {output}\nerror: {err}\n')
 
             try:
-                test = eval(output)
-            except:
+                test = eval(str(output))
+            except Exception as e:
                 output = str([output.decode('utf-8').replace('\n', '')]).encode('utf-8')
+                self.log.error(traceback.format_exc())
 
             result.status = proc.wait()
             result.stdout = output

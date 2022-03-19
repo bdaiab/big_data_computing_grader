@@ -18,8 +18,7 @@ RUN wget "https://mirrors.tuna.tsinghua.edu.cn/apache/spark/spark-3.0.3/spark-3.
     && rm -rf spark-3.0.3-bin-hadoop2.7.tgz \
 	&& wget "https://repos.spark-packages.org/graphframes/graphframes/0.8.2-spark3.0-s_2.12/graphframes-0.8.2-spark3.0-s_2.12.jar" \
 	&& mv graphframes-0.8.2-spark3.0-s_2.12.jar /edx/app/xqueue_watcher/spark-3.0.3-bin-hadoop2.7/jars \
-	&& mv log4j.properties /edx/app/xqueue_watcher/spark-3.0.3-bin-hadoop2.7/conf \
-	&& mv spark-env.sh /edx/app/xqueue_watcher/spark-3.0.3-bin-hadoop2.7/conf
+	&& mv log4j.properties /edx/app/xqueue_watcher/spark-3.0.3-bin-hadoop2.7/conf
 
 ENV SPARK_HOME=/edx/app/xqueue_watcher/spark-3.0.3-bin-hadoop2.7
 EXPOSE 6066 8080 7077 4044 18080

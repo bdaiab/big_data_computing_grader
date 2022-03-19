@@ -128,7 +128,7 @@ class JailedGrader(Grader):
             # self.log.debug(f'output: {output}\nerror: {err}\n')
 
             try:
-                test = eval(output.decode('utf-8'))
+                test = eval(str(output.decode('utf-8').replace('\n', '')))
             except Exception as e:
                 output = str([output.decode('utf-8').replace('\n', '')]).encode('utf-8')
                 # self.log.error(traceback.format_exc())

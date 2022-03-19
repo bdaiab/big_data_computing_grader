@@ -1,4 +1,0 @@
-Picked up _JAVA_OPTIONS: -XX:ParallelGCThreads=1
-Spark Command: /usr/lib/jvm/java-8-openjdk-amd64/bin/java -cp /home/lemitus/spark-3.0.3-bin-hadoop2.7/conf/:/home/lemitus/spark-3.0.3-bin-hadoop2.7/jars/* -Xmx1g org.apache.spark.deploy.worker.Worker --webui-port 8081 spark://vm1.mj3j1pjsmxvehb3lracj5cfx5e.bx.internal.cloudapp.net:7077
-========================================
-Picked up _JAVA_OPTIONS: -XX:ParallelGCThreads=1

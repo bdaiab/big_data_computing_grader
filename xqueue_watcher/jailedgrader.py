@@ -128,10 +128,10 @@ class JailedGrader(Grader):
             # self.log.debug(f'output: {output}\nerror: {err}\n')
 
             try:
-                test = eval(str(output))
+                test = eval(output.decode('utf-8'))
             except Exception as e:
                 output = str([output.decode('utf-8').replace('\n', '')]).encode('utf-8')
-                self.log.error(traceback.format_exc())
+                # self.log.error(traceback.format_exc())
 
             result.status = proc.wait()
             result.stdout = output
@@ -181,7 +181,8 @@ class JailedGrader(Grader):
 
         self._enable_i18n(grader_config.get("lang", LANGUAGE))
 
-        answer_path = Path(grader_path).dirname() / 'answer.py'
+        # load answer
+        answer_path = Path(grader_path).dirname() / 'ans'
         with open(answer_path, 'rb') as f:
             answer = f.read().decode('utf-8')
 
@@ -202,47 +203,15 @@ class JailedGrader(Grader):
             return results
 
         # Add a unicode encoding declaration.
-        processed_answer = prepend_coding(grader.preprocess(answer))
+        # processed_answer = prepend_coding(grader.preprocess(answer))
         processed_submission = prepend_coding(grader.preprocess(submission))
 
         # Same seed for both runs
         seed = random.randint(0, 20000)
 
-        # Run the official answer, to get the expected output.
-        expected_ok = False
-        expected_exc = None
-        try:
-            # If we want a factor of two speedup for now: trust the staff solution to
-            # avoid hitting the sandbox. (change run to run_trusted)
-            expected_outputs = None  # in case run_trusted raises an exception.
-            expected_outputs = self._run(grader_path, processed_answer, seed, timeout)
-            # self.log.debug(f'grader_path: {grader_path}\nprocessed_answer: {processed_answer}\nexpected_output: {expected_outputs.stdout}\n')
-            if expected_outputs:
-                expected = eval(expected_outputs.stdout.decode('utf-8').replace('\n', ''))
-                expected_ok = True
-        except Exception:
-            expected_exc = sys.exc_info()
-        else:
-            # We just ran the official answer, nothing should have gone wrong, so check
-            # everything, and note it as bad if anything is wrong.
-            # self.log.debug(f'expected: {expected}')
-            if expected_ok:
-                # if expected['exceptions'] \
-                #         or expected['grader']['status'] != 'ok' \
-                #         or expected['submission']['status'] != 'ok':
-                #     expected_ok = False
-                if expected_outputs.stderr:
-                    expected_ok = False
+        expected = eval(answer.replace('\n', ''))
 
-        if not expected_ok:
-            # We couldn't run the official answer properly, bail out, but don't show
-            # details to the student, since none of it is their code.
-            results['errors'].append(_('There was a problem running the staff solution (Staff debug: L364)'))
-            self.log.error("Couldn't run staff solution. grader = %s, output: %r",
-                           grader_path, expected_outputs, exc_info=expected_exc)
-            return results
 
-        # The expected code ran fine, go ahead and run the student submission.
         actual_ok = False
         actual_exc = None
         try:

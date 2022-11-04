@@ -11,9 +11,9 @@ WORKDIR /edx/app/xqueue_watcher
 COPY requirements /edx/app/xqueue_watcher/requirements
 COPY . /edx/app/xqueue_watcher
 RUN pip install -r requirements/production.txt && \
-	pip install -r requirements.txt -i
+	pip install -r requirements.txt
 	
-RUN wget "https://mirrors.tuna.tsinghua.edu.cn/apache/spark/spark-3.0.3/spark-3.0.3-bin-hadoop2.7.tgz" \
+RUN wget "https://archive.apache.org/dist/spark/spark-3.0.3/spark-3.0.3-bin-hadoop2.7.tgz" \
     && tar -xf spark-3.0.3-bin-hadoop2.7.tgz -C /edx/app/xqueue_watcher \
     && rm -rf spark-3.0.3-bin-hadoop2.7.tgz \
 	&& wget "https://repos.spark-packages.org/graphframes/graphframes/0.8.2-spark3.0-s_2.12/graphframes-0.8.2-spark3.0-s_2.12.jar" \

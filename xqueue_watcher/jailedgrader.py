@@ -231,7 +231,12 @@ class JailedGrader(Grader):
                 if actual_outputs.stderr:
                     # The grader ran OK, but the student code didn't, so show the student
                     # details of what went wrong.  There is probably an exception to show.
-                    shown_error = actual_outputs.stderr or _('There was an error thrown while running your solution.')
+                    if isinstance(actual_outputs.stderr, bytes):
+                        shown_error = actual_outputs.stderr.decode('utf-8')
+                    elif isinstance(actual_outputs.stderr, str):
+                        shown_error = actual_outputs.stderr
+                    else:
+                        shown_error = 'There was an error thrown while running your solution.'
                     results['errors'].append(shown_error)
             else:
                 # The grader didn't run well, we are going to bail.

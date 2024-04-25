@@ -87,6 +87,7 @@ class JailedGrader(Grader):
         trans.install(names=None)
 
     def _run(self, grader_path, thecode, seed, timeout):
+        self.log.info('enter _run method')
         files = SUPPORT_FILES + [grader_path]
         if self.locale_dir.exists():
             files.append(self.locale_dir)
@@ -102,6 +103,7 @@ class JailedGrader(Grader):
         SPARK_HOME = os.getenv("SPARK_HOME")
         command = os.path.join(SPARK_HOME, script)
         command = command + master_args
+        self.log.info('partial command = ' + command)
         with codejail.util.temp_directory() as homedir:
             # Make directory readable by other users ('sandbox' user needs to be
             # able to read it).
@@ -123,6 +125,7 @@ class JailedGrader(Grader):
 
             # self.log.debug(f'command: {command}\n')
             result = JailResult()
+            self.log.info('final command = ' + command)
             proc = Popen(command, stdout=PIPE, stderr=PIPE, shell=True)
             output, err = proc.communicate(timeout=timeout)
             # self.log.debug(f'output: {output}\nerror: {err}\n')
@@ -137,6 +140,31 @@ class JailedGrader(Grader):
             result.stdout = output
             result.stderr = err
 
+            if result.stdout is not None:
+                try:
+                    if isinstance(result.stdout, bytes):
+                        decoded_out = result.stdout.decode('utf-8')
+                    elif isinstance(result.stdout, str):
+                        decoded_out = result.stdout
+                    self.log.info('result.stdout = ' + decoded_out)
+                except Exception as e:
+                    self.log.info('failed to decode stdout')
+            else:
+                self.log.info('result.stdout is None')
+
+            if result.stderr is not None:
+                try:
+                    if isinstance(result.stderr, bytes):
+                        decoded_err = result.stderr.decode('utf-8')
+                    elif isinstance(result.stderr, str):
+                        decoded_err = result.stderr
+                    self.log.info('result.stderr = ' + decoded_err)
+                except Exception as e:
+                    self.log.info('failed to decode stderr')
+            else:
+                self.log.info('result.stderr is None')
+
+            self.log.info('begin to remove tmptmp')
             # Remove the tmptmp directory as the sandbox user since the sandbox
             # user may have written files that the application user can't delete.
             rm_cmd.extend([
@@ -214,9 +242,9 @@ class JailedGrader(Grader):
 
         actual_ok = False
         actual_exc = None
+        actual_outputs = None  # in case run raises an exception.
         try:
             # Do NOT trust the student solution (in production).
-            actual_outputs = None   # in case run raises an exception.
             actual_outputs = self._run(grader_path, processed_submission, seed, timeout)
             # self.log.debug(f'grader_path: {grader_path}\nprocessed_submission: {processed_submission}\nexpected_output: {actual_outputs.stdout}\n')
             if actual_outputs:
@@ -225,6 +253,7 @@ class JailedGrader(Grader):
             else:
                 results['errors'].append(_("There was a problem running your solution (Staff debug: L379)."))
         except Exception:
+            self.log.exception("run grader throws exception")
             actual_exc = sys.exc_info()
         else:
             if actual_ok or actual_outputs.stderr:
@@ -244,9 +273,13 @@ class JailedGrader(Grader):
 
         # If something went wrong, then don't continue
         if not actual_ok:
-            results['errors'].append(_("Something went wrong with your code(Staff debug: L397).\n"
-                                       f"Error Message:\n{actual_outputs.stderr.decode('utf-8')}\n"
-                                       f"Your Output:\n{actual_outputs.stdout.decode('utf-8')}"))
+            if actual_outputs is not None:
+                results['errors'].append(_("Something went wrong with your code(Staff debug: L397).\n"
+                                           f"Error Message:\n{actual_outputs.stderr.decode('utf-8')}\n"
+                                           f"Your Output:\n{actual_outputs.stdout.decode('utf-8')}"))
+            else:
+                results['errors'].append(_("Something went wrong with your code(Staff debug: L397)."))
+
             self.log.error("Couldn't run student solution. grader = %s, output: %r",
                            grader_path, actual_outputs, exc_info=actual_exc)
             return results
